@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <!-- JavaScript Bundle with Popper -->
@@ -15,20 +15,26 @@
 <body>
 <nav class="navbar navbar-dark bg-dark">
     <div class="container container-lg">
-        <ul class="nav justify-content-start">
+        <ul class="nav justify-content-between">
             <li class="nav-item">
                 <form th:action="@{/logout}" method="post">
-                    <input class="nav-link" type="submit" value="Sign Out"/>
+                    <input class="btn btn-outline-info" type="submit" value="Sign Out">
                 </form>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled" methods="GET" data-th-href="@{/messages}" tabindex="-1" aria-disabled="true">All messages</a>
+                <a class="btn btn-outline-info disabled" methods="GET" data-th-href="@{/messages}" tabindex="-1" aria-disabled="true">All messages</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-th-href="@{/addmessage}" tabindex="-1" aria-disabled="false">New Message</a>
+                <a class="btn btn-outline-info" data-th-href="@{/addmessage}" tabindex="-1" aria-disabled="false">New Message</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-th-href="@{/registration}" tabindex="-1" aria-disabled="true">User registration</a>
+                <a class="btn btn-outline-info" data-th-href="@{/registration}" tabindex="-1" aria-disabled="true">User registration</a>
+            </li>
+            <li class="nav-item justify-self-end">
+                <form class="form-inline" method="post" th:action="@{searchInMessages}">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success " type="submit">Search</button>
+                </form>
             </li>
         </ul>
         <span class="navbar-text" data-sec-authentication="name"></span>

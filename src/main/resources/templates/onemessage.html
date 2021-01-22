@@ -19,14 +19,14 @@
         <ul class="nav justify-content-start">
             <li class="nav-item">
                 <form th:action="@{/logout}" method="post">
-                    <input class="nav-link" type="submit" value="Sign Out"/>
+                    <input class="btn btn-outline-info" type="submit" value="Sign Out"/>
                 </form>
             </li>
             <li class="nav-item">
-                <a class="nav-link " data-th-href="@{/messages}" tabindex="-1" aria-disabled="false">All messages</a>
+                <a class="btn btn-outline-info " data-th-href="@{/messages}" tabindex="-1" aria-disabled="false">All messages</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-th-href="@{/addmessage}" tabindex="-1" aria-disabled="false">New meassage</a>
+                <a class="btn btn-outline-info" data-th-href="@{/addmessage}" tabindex="-1" aria-disabled="false">New meassage</a>
             </li>
         </ul>
         <span class="navbar-text" data-sec-authentication="name"></span>
