@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+            crossorigin="anonymous"></script>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+          crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/registrationstyle.css}">
+    <title>Message</title>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+        <ul class="nav justify-content-start">
+            <li class="nav-item">
+                <form th:action="@{/logout}" method="post">
+                    <input class="nav-link" type="submit" value="Sign Out"/>
+                </form>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " data-th-href="@{/messages}" tabindex="-1" aria-disabled="false">All messages</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-th-href="@{/addmessage}" tabindex="-1" aria-disabled="false">New meassage</a>
+            </li>
+        </ul>
+        <span class="navbar-text" data-sec-authentication="name"></span>
+    </div>
+</nav>
+<div class="container-md">
+    <h2>Üzenet</h2>
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <td>ID</td>
+            <td>Üzenet szövege</td>
+            <td>Írta</td>
+            <td>Fogadta</td>
+            <td>Időpont</td>
+        </tr>
+        </thead>
+        <tr>
+            <td data-th-text="${message.id}"></td>
+            <td data-th-text="${message.message}"></td>
+            <td data-th-text="${message.sender}"></td>
+            <td data-th-text="${message.reciver}"></td>
+            <td data-th-text="${message.time}"></td>
+            <td><a class="btn btn-alert" data-th-href="@{deletemessage/{id} (id=${message.id})}">Törlés</a>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
