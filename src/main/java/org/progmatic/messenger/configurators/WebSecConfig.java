@@ -42,7 +42,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/css/**").permitAll()
                 .and()
                 .formLogin()
-                .defaultSuccessUrl("/messages", true)
+//                .defaultSuccessUrl("/main", true)
                 .loginPage("/loginpage").permitAll()
                 .loginProcessingUrl("/loginpage/login")
                 .and()

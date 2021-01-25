@@ -21,7 +21,8 @@ public class MyUser implements UserDetails {
     private LocalDate birthDay;
     private LocalDateTime registrationTime;
 
-    public MyUser(@NotNull String userName, @NotNull String email, @NotNull String password, LocalDate birthDay) {
+    public MyUser(@NotNull String userName, @NotNull String email,
+                  @NotNull String password, LocalDate birthDay) {
         this.userName = userName;
         this.email = email;
         this.password = password;

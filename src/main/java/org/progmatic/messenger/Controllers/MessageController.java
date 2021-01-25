@@ -4,16 +4,17 @@ import org.progmatic.messenger.modell.Message;
 import org.progmatic.messenger.modell.MyUser;
 import org.progmatic.messenger.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
 
@@ -29,20 +30,21 @@ public class MessageController {
         this.userDetailsService = service;
     }
 
-    @GetMapping(value = {"/messages"})
+    @GetMapping(value = {"/allmessages"})
     public String messages(Model model) {
         model.addAttribute("message", "Üzenet szövege");
         model.addAttribute("writtenBy", "Írta");
         model.addAttribute("time", "Időpont");
         model.addAttribute("messages", mService.getAllMessages());
 
-        return "messages";
+        return "allmessages";
     }
 
     @GetMapping("/")
     public String main() {
-        return "messages";
+        return "main";
     }
+
 
     @GetMapping("/addmessage")
     public String addMessage(@ModelAttribute("message") Message msg) {
@@ -63,9 +65,15 @@ public class MessageController {
 
     @GetMapping("/onemessage/{id}")
     public String showMessage(
-            @PathVariable("id") int messagesID, Model model) {
+            @PathVariable("id") int messagesID, Model model)    {
         model.addAttribute("message", mService.findMessageById(messagesID));
         return "onemessage";
+    }
+
+    @GetMapping("/deletemessage/{id}")
+    public String deleteMessage(@PathVariable("id") int messageID){
+        mService.deleteMessage(messageID);
+        return "/allmessages";
     }
 
     @GetMapping("/registration")

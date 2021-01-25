@@ -38,6 +38,9 @@ public class MessageService {
         messageList.add(msg);
     }
 
+    public void deleteMessage(int messageID) {
+        messageList.removeIf(actual -> actual.getId() == messageID);
+    }
 }
 
 

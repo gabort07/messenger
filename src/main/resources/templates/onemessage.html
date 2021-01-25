@@ -23,7 +23,7 @@
                 </form>
             </li>
             <li class="nav-item">
-                <a class="btn btn-outline-info " data-th-href="@{/messages}" tabindex="-1" aria-disabled="false">All messages</a>
+                <a class="btn btn-outline-info " data-th-href="@{/allmessages}" tabindex="-1" aria-disabled="false">All messages</a>
             </li>
             <li class="nav-item">
                 <a class="btn btn-outline-info" data-th-href="@{/addmessage}" tabindex="-1" aria-disabled="false">New meassage</a>
@@ -42,16 +42,16 @@
             <td>Írta</td>
             <td>Fogadta</td>
             <td>Időpont</td>
+            <td></td>
         </tr>
         </thead>
         <tr>
-            <td data-th-text="${message.id}"></td>
-            <td data-th-text="${message.message}"></td>
-            <td data-th-text="${message.sender}"></td>
-            <td data-th-text="${message.reciver}"></td>
-            <td data-th-text="${message.time}"></td>
-            <td><a class="btn btn-alert" data-th-href="@{deletemessage/{id} (id=${message.id})}">Törlés</a>
-            </td>
+            <td th:text="${message.id}"></td>
+            <td th:text="${message.message}"></td>
+            <td th:text="${message.sender}"></td>
+            <td th:text="${message.reciver}"></td>
+            <td th:text="${message.time }"></td>
+            <td><a class="btn btn-danger" th:href="@{/deletemessage/{id} (id=${message.id})}">Törlés</a></td>
         </tr>
     </table>
 </div>
