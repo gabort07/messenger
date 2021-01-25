@@ -3,6 +3,9 @@ package org.progmatic.messenger.services;
 import org.progmatic.messenger.modell.Message;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +13,9 @@ import java.util.Optional;
 @Service
 public class MessageService {
     List<Message> messageList;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     public MessageService() {
         this.messageList = new ArrayList<>();
@@ -34,7 +40,9 @@ public class MessageService {
         return opt.orElse(null);
     }
 
+    @Transactional
     public void addMessage(Message msg){
+        entityManager.persist(msg);
         messageList.add(msg);
     }
 

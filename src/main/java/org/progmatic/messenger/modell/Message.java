@@ -1,20 +1,36 @@
 package org.progmatic.messenger.modell;
 
+import javax.annotation.processing.Generated;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Entity
+@Table(name="MESSAGES_TBL")
 public class Message {
     //    @NotEmpty
+    @Column
     private String sender;
+
     @NotEmpty
+    @Column
     private String reciver;
+
+    @Column(name="sentDate")
     private LocalDateTime time;
+
+    @Column
     @Size(min = 0, max = 300)
     private String message;
+
+    @Id
+    @GeneratedValue
     private int id;
 
+    public Message() {
+    }
 
     public Message(String sender, String reciver, String message) {
         this.sender = sender;
@@ -44,8 +60,9 @@ public class Message {
         return sender;
     }
 
-    public String getTime() {
-        return time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    public LocalDateTime getTime() {
+//        return time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return time;
     }
 
     public String getMessage() {
