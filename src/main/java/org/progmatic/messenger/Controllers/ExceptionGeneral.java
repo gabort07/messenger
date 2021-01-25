@@ -9,7 +9,7 @@ public class ExceptionGeneral {
 
     @ExceptionHandler
     public String exception(Exception ex, Model model){
-        model.addAttribute("exception", ex);
-        return "messages";
+        model.addAttribute("exceptionMessage", ex.getMessage());
+        return "error";
     }
 }

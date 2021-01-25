@@ -16,7 +16,7 @@ public class MessageService {
         messageList.add(new Message("Pisti", "Zoli", "Szia!"));
         messageList.add(new Message("Zoli", "Pist", "Szia!"));
         messageList.add(new Message("Pisti", "Zoli", "Mi a dörgés?"));
-        messageList.add(new Message("Zoli", "Pisti", "Semmi! Ott?"));
+        messageList.add(new  Message("Zoli", "Pisti", "Semmi! Ott?"));
         messageList.add(new Message("Pisti", "Zoli", "Semmi!"));
         messageList.add(new Message("Zoli", "Pisti", "Ok! Csá!"));
         messageList.add(new Message("Pisti", "Zoli", "Ok! Csá!"));
@@ -30,7 +30,7 @@ public class MessageService {
     public Message findMessageById(int messageId) {
         Optional<Message> opt = messageList.stream()
                 .filter(message -> message.getId() == messageId)
-                .findAny();
+                .findFirst();
         return opt.orElse(null);
     }
 
