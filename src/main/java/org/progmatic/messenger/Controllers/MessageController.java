@@ -3,11 +3,11 @@ package org.progmatic.messenger.Controllers;
 import org.progmatic.messenger.modell.Message;
 import org.progmatic.messenger.modell.MyUser;
 import org.progmatic.messenger.services.MessageService;
+import org.progmatic.messenger.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,21 +21,21 @@ import javax.validation.Valid;
 @Controller
 public class MessageController {
 
-    private MessageService mService;
+    private MessageService messageService;
     private UserDetailsService userDetailsService;
 
     @Autowired
     public MessageController(MessageService messageService, UserDetailsService service) {
-        this.mService = messageService;
+        this.messageService = messageService;
         this.userDetailsService = service;
     }
 
-    @GetMapping(value = {"/allmessages"})
+    @GetMapping({"/allmessages"})
     public String messages(Model model) {
         model.addAttribute("message", "Üzenet szövege");
         model.addAttribute("writtenBy", "Írta");
         model.addAttribute("time", "Időpont");
-        model.addAttribute("messages", mService.getAllMessages());
+        model.addAttribute("messages", messageService.getAllMessages());
 
         return "allmessages";
     }
@@ -47,7 +47,9 @@ public class MessageController {
 
 
     @GetMapping("/addmessage")
-    public String addMessage(@ModelAttribute("message") Message msg) {
+    public String addMessage(@ModelAttribute("message") Message msg, Model model) {
+        UserService userService = (UserService) userDetailsService;
+        model.addAttribute("users", userService.lisAllUser());
         return "addmessage";
     }
 
@@ -57,41 +59,25 @@ public class MessageController {
         if (bindingResult.hasErrors()) {
             return "addmessage";
         }
-        UserDetails user = userDetailsService.loadUserByUsername(((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername());
-        msg.setSender(user.getUsername());
-        mService.addMessage(msg);
-        return "redirect:/messages";
+        MyUser user = (MyUser) userDetailsService.loadUserByUsername(((UserDetails) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal()).getUsername());
+        msg.setSender(user);
+        messageService.addMessage(msg);
+        return "redirect:/allmessages";
     }
 
     @GetMapping("/onemessage/{id}")
     public String showMessage(
             @PathVariable("id") int messagesID, Model model)    {
-        model.addAttribute("message", mService.findMessageById(messagesID));
+        model.addAttribute("message", messageService.findMessageById(messagesID));
         return "onemessage";
     }
 
     @GetMapping("/deletemessage/{id}")
     public String deleteMessage(@PathVariable("id") int messageID){
-        mService.deleteMessage(messageID);
-        return "/allmessages";
+        messageService.deleteMessage(messageID);
+        return "redirect:/allmessages";
     }
 
-    @GetMapping("/registration")
-    public String registerUsers() {
-        return "registration";
-    }
-
-    @PostMapping("/registration")
-    public String registerUser(@ModelAttribute("User") MyUser user) {
-        InMemoryUserDetailsManager userManager =
-                (InMemoryUserDetailsManager) userDetailsService;
-        userManager.createUser(user);
-        return "redirect:/loginpage";
-    }
-
-    @GetMapping("/loginpage")
-    public String loginPage() {
-        return "loginpage";
-    }
 
 }

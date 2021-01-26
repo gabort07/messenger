@@ -2,13 +2,12 @@ package org.progmatic.messenger.services;
 
 import org.progmatic.messenger.modell.Message;
 import org.springframework.stereotype.Service;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MessageService {
@@ -19,35 +18,31 @@ public class MessageService {
 
     public MessageService() {
         this.messageList = new ArrayList<>();
-        messageList.add(new Message("Pisti", "Zoli", "Szia!"));
-        messageList.add(new Message("Zoli", "Pist", "Szia!"));
-        messageList.add(new Message("Pisti", "Zoli", "Mi a dörgés?"));
-        messageList.add(new  Message("Zoli", "Pisti", "Semmi! Ott?"));
-        messageList.add(new Message("Pisti", "Zoli", "Semmi!"));
-        messageList.add(new Message("Zoli", "Pisti", "Ok! Csá!"));
-        messageList.add(new Message("Pisti", "Zoli", "Ok! Csá!"));
 
     }
 
     public List<Message> getAllMessages() {
-        return messageList;
+        List<Message> list = entityManager.createQuery(
+                "SELECT m FROM Message m")
+                .getResultList();
+        if(list == null){
+            return new ArrayList<>();
+        }
+        return list;
     }
 
     public Message findMessageById(int messageId) {
-        Optional<Message> opt = messageList.stream()
-                .filter(message -> message.getId() == messageId)
-                .findFirst();
-        return opt.orElse(null);
+        return entityManager.find(Message.class, messageId);
     }
 
     @Transactional
     public void addMessage(Message msg){
         entityManager.persist(msg);
-        messageList.add(msg);
+       msg.setTime(LocalDateTime.now());
     }
 
     public void deleteMessage(int messageID) {
-        messageList.removeIf(actual -> actual.getId() == messageID);
+        entityManager.remove(entityManager.find(Message.class, messageID));
     }
 }
 

@@ -50,7 +50,7 @@
             <td th:text="${message.message}"></td>
             <td th:text="${message.sender}"></td>
             <td th:text="${message.reciver}"></td>
-            <td th:text="${message.time }"></td>
+            <td th:text="${message.time}"></td>
             <td><a class="btn btn-danger" th:href="@{/deletemessage/{id} (id=${message.id})}">Törlés</a></td>
         </tr>
     </table>
