@@ -16,7 +16,6 @@ public class Topic {
     @OneToMany
     private List<Message> messageList;
 
-
     public void setId(int id) {
         this.id = id;
     }

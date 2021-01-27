@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <!-- JavaScript Bundle with Popper -->
@@ -26,32 +26,32 @@
                 <a class="btn btn-outline-info " data-th-href="@{/allmessages}" tabindex="-1" aria-disabled="false">All messages</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-outline-info" data-th-href="@{/addmessage}" tabindex="-1" aria-disabled="false">New meassage</a>
+                <a class="btn btn-outline-info" data-th-href="@{/addmessage}" tabindex="-1" aria-disabled="false">New message</a>
             </li>
         </ul>
         <span class="navbar-text" data-sec-authentication="name"></span>
     </div>
 </nav>
 <div class="container-md">
-    <h2>Üzenet</h2>
+    <h2>Message</h2>
     <table class="table table-striped table-bordered">
         <thead>
         <tr>
-            <td>ID</td>
-            <td>Üzenet szövege</td>
-            <td>Írta</td>
-            <td>Fogadta</td>
-            <td>Időpont</td>
+            <td>Topic</td>
+            <td>Written by</td>
+            <td>Written to</td>
+            <td>Written at</td>
+            <td>Message text</td>
             <td></td>
         </tr>
         </thead>
         <tr>
-            <td th:text="${message.id}"></td>
-            <td th:text="${message.message}"></td>
-            <td th:text="${message.sender}"></td>
-            <td th:text="${message.reciver}"></td>
+            <td th:text="${message.topic.topicName}"></td>
+            <td th:text="${message.sender.userName}"></td>
+            <td th:text="${message.receiver.userName}"></td>
             <td th:text="${message.time}"></td>
-            <td><a class="btn btn-danger" th:href="@{/deletemessage/{id} (id=${message.id})}">Törlés</a></td>
+            <td th:text="${message.message}"></td>
+            <td sec:authorize="hasRole('ROLE_ADMIN')"><a class="btn btn-danger" th:href="@{/deletemessage/{id} (id=${message.id})}">Delete message</a></td>
         </tr>
     </table>
 </div>

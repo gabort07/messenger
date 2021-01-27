@@ -21,10 +21,12 @@
                 </form>
             </li>
             <li class="nav-item">
-                <a class="btn btn-outline-info disabled" data-th-href="@{/addmessage}" tabindex="-1" aria-disabled="true">New message</a>
+                <a class="btn btn-outline-info disabled" data-th-href="@{/addmessage}" tabindex="-1"
+                   aria-disabled="true">New message</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-outline-info" data-th-href="@{/allmessages}" tabindex="-1" aria-disabled="true">All messages</a>
+                <a class="btn btn-outline-info" data-th-href="@{/allmessages}" tabindex="-1" aria-disabled="true">All
+                    messages</a>
             </li>
         </ul>
         <span class="navbar-text" data-sec-authentication="name"></span>
@@ -36,32 +38,51 @@
             <h1>Post new message</h1>
         </div>
     </div>
-    <form method="POST" data-th-action="@{/message/create}" data-th-object="${message}">
-
+    <form th:action="@{/addmessage/newtopic}" method="POST" th:object="${topic}">
+        <div class="col-4">
+                    <textarea class="form-control" type="text" name="topicName" placeholder="Nem topic"
+                              aria-label="Text" autofocus></textarea>
+        </div>
+        <div class="col-2">
+            <input type="submit" class="btn btn-success" value="Create new topic">
+        </div>
+    </form>
+    <form method="POST" th:action="@{/addmessage/create}" th:object="${message}">
         <div class="row py-2">
             <div class="col-2">
-                <p>Címzett</p>
+                <p>Topics</p>
+            </div>
+            <div class="col">
+                <select th:field="*{topic.id}" class="form-control">
+                    <option th:each="topic: ${topics}" th:value="${topic.id}" th:text="${topic.topicName}"></option>
+                </select>
+            </div>
+
+        </div>
+        <div class="row py-2">
+            <div class="col-2">
+                <p>Send to</p>
             </div>
             <div class="col-8">
-                <select name="receiver" class="form-control">
-                <option th:each="receiver: ${users}" th:value="${receiver}" th:text="${receiver.userName}">
+                <select th:field="*{receiver.id}" class="form-control">
+                    <option th:each="usr: ${users}" th:value="${usr.id}" th:text="${usr.userName}">Send To</option>
                 </select>
             </div>
         </div>
         <div class="row py-2">
             <div class="col-2">
-                <p>Üzenet</p>
+                <p>Message text</p>
             </div>
             <div class="col-8">
                 <div class="row">
                     <div class="col">
                         <textarea class="form-control" type="text" name="message" placeholder="Text"
-                                  aria-label="Text"  required autofocus></textarea>
+                                  aria-label="Text" required autofocus></textarea>
                     </div>
                 </div>
                 <div class="row py-2">
                     <div class="col">
-                        <input type="submit" class="btn btn-outline-success" value="Submit">
+                        <input type="submit" class="btn btn-success" value="Submit">
                     </div>
                 </div>
             </div>

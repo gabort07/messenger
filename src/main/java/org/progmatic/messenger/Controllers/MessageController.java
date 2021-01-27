@@ -2,7 +2,9 @@ package org.progmatic.messenger.Controllers;
 
 import org.progmatic.messenger.modell.Message;
 import org.progmatic.messenger.modell.MyUser;
+import org.progmatic.messenger.modell.Topic;
 import org.progmatic.messenger.services.MessageService;
+import org.progmatic.messenger.services.TopicService;
 import org.progmatic.messenger.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,11 +25,14 @@ public class MessageController {
 
     private MessageService messageService;
     private UserDetailsService userDetailsService;
+    private TopicService topicService;
 
     @Autowired
-    public MessageController(MessageService messageService, UserDetailsService service) {
+    public MessageController(MessageService messageService, UserDetailsService service,
+                             TopicService topicService) {
         this.messageService = messageService;
         this.userDetailsService = service;
+        this.topicService = topicService;
     }
 
     @GetMapping({"/allmessages"})
@@ -50,14 +55,25 @@ public class MessageController {
     public String addMessage(@ModelAttribute("message") Message msg, Model model) {
         UserService userService = (UserService) userDetailsService;
         model.addAttribute("users", userService.lisAllUser());
+        model.addAttribute("topics", topicService.listAllTopics());
         return "addmessage";
     }
 
-    @PostMapping("/message/create")
+    @PostMapping("/addmessage/newtopic")
+    public String newTopic(@ModelAttribute("topic") @Valid Topic topic,
+                           BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "redirect:/addmessage";
+        }
+        topicService.addNewTopic(topic);
+        return "redirect:/addmessage";
+    }
+
+    @PostMapping("/addmessage/create")
     public String createMessage(@ModelAttribute("message") @Valid Message msg,
                                 BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return "addmessage";
+            return "redirect:/addmessage";
         }
         MyUser user = (MyUser) userDetailsService.loadUserByUsername(((UserDetails) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal()).getUsername());
@@ -68,13 +84,13 @@ public class MessageController {
 
     @GetMapping("/onemessage/{id}")
     public String showMessage(
-            @PathVariable("id") int messagesID, Model model)    {
+            @PathVariable("id") int messagesID, Model model) {
         model.addAttribute("message", messageService.findMessageById(messagesID));
         return "onemessage";
     }
 
     @GetMapping("/deletemessage/{id}")
-    public String deleteMessage(@PathVariable("id") int messageID){
+    public String deleteMessage(@PathVariable("id") int messageID) {
         messageService.deleteMessage(messageID);
         return "redirect:/allmessages";
     }

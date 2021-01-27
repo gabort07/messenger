@@ -1,6 +1,5 @@
 package org.progmatic.messenger.services;
 
-import org.progmatic.messenger.modell.Message;
 import org.progmatic.messenger.modell.MyUser;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

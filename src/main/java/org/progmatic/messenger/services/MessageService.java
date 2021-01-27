@@ -41,6 +41,7 @@ public class MessageService {
        msg.setTime(LocalDateTime.now());
     }
 
+    @Transactional
     public void deleteMessage(int messageID) {
         entityManager.remove(entityManager.find(Message.class, messageID));
     }

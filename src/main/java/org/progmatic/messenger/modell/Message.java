@@ -2,7 +2,9 @@ package org.progmatic.messenger.modell;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -14,11 +16,11 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    //    @NotEmpty
+    @NotNull
     @ManyToOne
     private MyUser sender;
 
-    @NotEmpty
+    @NotNull
     @ManyToOne
     private MyUser receiver;
 
@@ -26,7 +28,8 @@ public class Message {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime time;
 
-
+    @NotBlank
+    @NotEmpty
     @Size(min = 0, max = 300)
     private String message;
 
@@ -53,7 +56,7 @@ public class Message {
         this.time = LocalDateTime.now();
     }
 
-    public MyUser getReciver() {
+    public MyUser getReceiver() {
         return receiver;
     }
 
@@ -94,6 +97,13 @@ public class Message {
         this.sender = sender;
     }
 
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+    }
 }
 
 
