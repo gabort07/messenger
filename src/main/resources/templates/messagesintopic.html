@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <!-- JavaScript Bundle with Popper -->
@@ -71,19 +72,24 @@
         </ul>
     </form>
     <h2>Messages</h2>
-    <table class="table">
+    <table class="table table-striped table-bordered">
         <thead>
         <tr>
-            <td>Message topic</td>
-            <td >Message text</td>
-            <td>Show details</td>
+            <td>Topic</td>
+            <td>Written by</td>
+            <td>Written to</td>
+            <td>Written at</td>
+            <td>Message text</td>
+            <td></td>
         </tr>
         </thead>
-        <tr th:each="message: ${messages}">
-            <td><a class="text-dark" th:text="${message.topic.topicName}"
-                   th:href="@{allmessages/{topicID} (topicID=${message.topic.id})}"></a></td>
-            <td  class="bg-secondary" th:text="${message.message}"></td>
-            <td><a class="btn btn-warning" th:href="@{/onemessage/{id}(id =${message.id})}">Show details</a></td>
+        <tr th:each="message: ${messagesInTopic}">
+            <td th:text="${message.topic.topicName}"></td>
+            <td th:text="${message.sender.userName}"></td>
+            <td th:text="${message.receiver.userName}"></td>
+            <td th:text="${message.time}"></td>
+            <td th:text="${message.message}"></td>
+            <td sec:authorize="hasRole('ROLE_ADMIN')"><a class="btn btn-danger" th:href="@{/deletemessage/{id} (id=${message.id})}">Delete message</a></td>
         </tr>
     </table>
 

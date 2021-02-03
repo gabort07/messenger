@@ -1,6 +1,7 @@
 package org.progmatic.messenger.services;
 
 import org.progmatic.messenger.modell.MyUser;
+import org.progmatic.messenger.modell.Role;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,11 +33,17 @@ public class UserService implements UserDetailsService {
         return list;
     }
     public boolean isUserNameTaken(String name) {
-        return searchUserByName(name) != null;
+        try {
+            searchUserByName(name);
+        } catch (Exception e){
+            return false;
+        }
+        return true;
     }
 
     public MyUser searchUserByName(String name) {
-        return entityManager.createQuery("select a from MyUser a where a.userName = :name", MyUser.class)
+        return entityManager
+                .createQuery("select a from MyUser a join fetch a.userRoles where a.userName = :name", MyUser.class)
                 .setParameter("name", name).getSingleResult();
     }
 
@@ -50,7 +57,10 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void addUser(MyUser user) {
+        Role userRole = entityManager.createQuery("select r from Role r  where r.name= 'ROLE_USER'", Role.class)
+                .getSingleResult();
         entityManager.persist(user);
+        userRole.getUsersInThisRole().add(user);
         user.setRegistrationTime(LocalDateTime.now());
     }
 

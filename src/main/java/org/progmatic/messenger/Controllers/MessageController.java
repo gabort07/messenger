@@ -7,6 +7,7 @@ import org.progmatic.messenger.services.MessageService;
 import org.progmatic.messenger.services.TopicService;
 import org.progmatic.messenger.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 public class MessageController {
@@ -50,34 +52,45 @@ public class MessageController {
         return "main";
     }
 
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/logout")
+    public String logout() {
+        return "loginpage";
+    }
 
     @GetMapping("/addmessage")
-    public String addMessage(@ModelAttribute("message") Message msg, Model model) {
+    public String addMessage(@ModelAttribute("message") Message msg,
+                             Model model) {
         UserService userService = (UserService) userDetailsService;
-        model.addAttribute("users", userService.lisAllUser());
+        MyUser actualUser = (MyUser) userDetailsService.loadUserByUsername(((UserDetails) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal()).getUsername());
+        List<MyUser> othersList = userService.lisAllUser();
+        othersList.removeIf(myUser -> myUser.getId() == actualUser.getId());
+        model.addAttribute("actualUser", actualUser);
+        model.addAttribute("users", othersList);
         model.addAttribute("topics", topicService.listAllTopics());
         return "addmessage";
     }
 
     @PostMapping("/addmessage/newtopic")
     public String newTopic(@ModelAttribute("topic") @Valid Topic topic,
-                           BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             return "redirect:/addmessage";
         }
         topicService.addNewTopic(topic);
         return "redirect:/addmessage";
     }
 
+
     @PostMapping("/addmessage/create")
     public String createMessage(@ModelAttribute("message") @Valid Message msg,
+                                @ModelAttribute("actualUser") @Valid MyUser actualUsr,
                                 BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "redirect:/addmessage";
         }
-        MyUser user = (MyUser) userDetailsService.loadUserByUsername(((UserDetails) SecurityContextHolder
-                .getContext().getAuthentication().getPrincipal()).getUsername());
-        msg.setSender(user);
+        msg.setSender(actualUsr);
         messageService.addMessage(msg);
         return "redirect:/allmessages";
     }
@@ -89,11 +102,40 @@ public class MessageController {
         return "onemessage";
     }
 
+    @GetMapping("/onemessage/{id}/{text}")
+    public String modifyMessageText(
+            @PathVariable("id") int messagesID,
+            @PathVariable("text") String text,
+            Model model) throws InterruptedException {
+        model.addAttribute("message", messageService.modifyMessage(messagesID, text));
+        return "onemessage";
+    }
+
+    @GetMapping("/onemessage/{id}/{sleep}/{text}")
+    public String modifyMessageTextWithSleep(
+            @PathVariable("id") int messagesID,
+            @PathVariable("sleep") long sleep,
+            @PathVariable("text") String text,
+            Model model) throws InterruptedException {
+        model.addAttribute("message", messageService.modifyMessage(messagesID, sleep, text));
+        return "onemessage";
+    }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/deletemessage/{id}")
     public String deleteMessage(@PathVariable("id") int messageID) {
         messageService.deleteMessage(messageID);
         return "redirect:/allmessages";
     }
+
+    @GetMapping("/allmessages/{topicID}")
+    public String listMessasgesInTopic(@PathVariable("topicID") int topicID, Model model) {
+        model.addAttribute("messagesInTopic", messageService.getMessagesFromTopic(topicID));
+        return "messagesintopic";
+    }
+
+
 
 
 }

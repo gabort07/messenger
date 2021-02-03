@@ -1,8 +1,11 @@
 package org.progmatic.messenger.modell;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -12,30 +15,37 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name="USERS_TBL")
-public class MyUser implements UserDetails {
+@Table(name = "USERS_TBL")
+public class MyUser extends WebSecurityConfigurerAdapter implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @NotNull
 
+    @NotNull
     private String userName;
-    @NotNull
 
+    @NotNull
     private String email;
-    @NotNull
 
+    @NotNull
     private String password;
+
     @Column
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDay;
 
     private LocalDateTime registrationTime;
+
     @OneToMany
     private List<Message> sentMessages;
+
     @OneToMany
     private List<Message> receivedMessages;
+
+//
+    @ManyToMany(mappedBy = "usersInThisRole")
+    private List<Role> userRoles = new ArrayList<>();
 
     public MyUser(@NotNull String userName, @NotNull String email,
                   @NotNull String password, LocalDate birthDay) {
@@ -55,6 +65,10 @@ public class MyUser implements UserDetails {
         this.password = password;
         this.birthDay = birthDay;
         this.registrationTime = LocalDateTime.now();
+    }
+
+    public void setUserRoles(List<Role> userRoles) {
+        this.userRoles = userRoles;
     }
 
     public MyUser() {
@@ -107,7 +121,15 @@ public class MyUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList<>();
+        List<GrantedAuthority> list = new ArrayList<>();
+        for (Role actual : userRoles) {
+            list.add(new SimpleGrantedAuthority(actual.getName()));
+        }
+        return list;
+    }
+
+    public Collection<Role> getUserRoles() {
+        return userRoles;
     }
 
     @Override

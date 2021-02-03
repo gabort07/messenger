@@ -3,6 +3,7 @@ package org.progmatic.messenger.configurators;
 import org.progmatic.messenger.modell.MyUser;
 import org.progmatic.messenger.services.UserService;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Configuration
 public class WebSecConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
@@ -29,15 +31,14 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+    protected void configure(HttpSecurity httpSec) throws Exception {
+        httpSec.authorizeRequests()
                 .antMatchers("/css/**").permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/error").permitAll()
                 .and()
                 .formLogin()
-//                .defaultSuccessUrl("/main", true)
                 .loginPage("/loginpage").permitAll()
                 .loginProcessingUrl("/loginpage/login")
                 .and()

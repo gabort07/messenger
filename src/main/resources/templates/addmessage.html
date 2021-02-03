@@ -65,7 +65,7 @@
             </div>
             <div class="col-8">
                 <select th:field="*{receiver.id}" class="form-control">
-                    <option th:each="usr: ${users}" th:value="${usr.id}" th:text="${usr.userName}">Send To</option>
+                    <option th:each="usr: ${users}" th:value="${usr.id}" th:text="${usr.userName}"></option>
                 </select>
             </div>
         </div>

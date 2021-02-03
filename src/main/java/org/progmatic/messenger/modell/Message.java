@@ -1,16 +1,21 @@
 package org.progmatic.messenger.modell;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Entity
 @Table(name="MESSAGES_TBL")
 public class Message {
+
+    @Version
+    private long version;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,9 +41,11 @@ public class Message {
     @ManyToOne
     private Topic topic;
 
+    @OneToMany
+    private Collection<Message> commentsList;
 
-    public Message() {
-    }
+
+    public Message() {}
 
     public Message(MyUser sender, MyUser receiver, String message) {
         this.sender = sender;
@@ -46,15 +53,27 @@ public class Message {
         this.message = message;
         this.id = (int) (Math.random() * 1000) + 1;
         this.time = LocalDateTime.now();
+
     }
 
-    public Message(int id, MyUser sender, MyUser receiver, String message) {
+    public Message(int id, MyUser sender, MyUser receiver, String message, Collection<Message> commentsList) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
         this.id = id;
+        this.commentsList = commentsList;
+
         this.time = LocalDateTime.now();
     }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
 
     public MyUser getReceiver() {
         return receiver;
@@ -103,6 +122,14 @@ public class Message {
 
     public void setTopic(Topic topic) {
         this.topic = topic;
+    }
+
+    public Collection<Message> getCommentsList() {
+        return commentsList;
+    }
+
+    public void setCommentsList(Collection<Message> commentsList) {
+        this.commentsList = commentsList;
     }
 }
 

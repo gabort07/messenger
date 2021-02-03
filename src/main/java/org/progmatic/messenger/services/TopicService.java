@@ -24,7 +24,6 @@ public class TopicService {
         return list;
     }
     @Transactional
-
     public void addNewTopic(Topic topic){
         entityManager.persist(topic);
     }
