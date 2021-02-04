@@ -2,8 +2,7 @@ package org.progmatic.messenger.services;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.progmatic.messenger.modell.Message;
-import org.progmatic.messenger.modell.QMessage;
+import org.progmatic.messenger.modell.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -13,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.swing.text.StyledEditorKit;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -80,9 +80,40 @@ public class MessageService {
     @Transactional
     public List<Message> getMessagesFromTopic(int topicID){
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-       return entityManager.createQuery("select m from Message m where m.topic.id = :topicID", Message.class)
-                .setParameter("topicID", topicID)
-                .getResultList();
+        return queryFactory.selectFrom(QMessage.message1).where(QMessage.message1.topic.id.eq(topicID)).fetch();
+    }
+
+    @Transactional
+    public List<Message> searchIn(String text, Boolean topics, Boolean users, Boolean messages){
+        List<Message> list = new ArrayList<>();
+        if (topics){
+            list.addAll(self.searchInTopics(text));
+        }
+        if(users){
+            list.addAll(self.searchInUsers(text));
+        }
+        if(messages){
+            list.addAll(self.searchInMessages(text));
+        }
+        return list;
+    }
+
+    @Transactional
+    public List<Message> searchInTopics(String text){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        return queryFactory.selectFrom(QMessage.message1).where(QMessage.message1.topic.topicName.contains(text)).fetch();
+    }
+
+    @Transactional
+    public List<Message> searchInUsers(String text){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        return queryFactory.selectFrom(QMessage.message1).where(QMessage.message1.sender.userName.contains(text)).fetch();
+    }
+
+    @Transactional
+    public List<Message> searchInMessages(String text){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        return queryFactory.selectFrom(QMessage.message1).where(QMessage.message1.message.contains(text)).fetch();
     }
 
 

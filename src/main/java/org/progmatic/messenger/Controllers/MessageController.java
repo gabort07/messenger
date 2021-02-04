@@ -14,10 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -106,7 +103,7 @@ public class MessageController {
     public String modifyMessageText(
             @PathVariable("id") int messagesID,
             @PathVariable("text") String text,
-            Model model) throws InterruptedException {
+            Model model) {
         model.addAttribute("message", messageService.modifyMessage(messagesID, text));
         return "onemessage";
     }
@@ -121,7 +118,6 @@ public class MessageController {
         return "onemessage";
     }
 
-
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/deletemessage/{id}")
     public String deleteMessage(@PathVariable("id") int messageID) {
@@ -133,6 +129,16 @@ public class MessageController {
     public String listMessasgesInTopic(@PathVariable("topicID") int topicID, Model model) {
         model.addAttribute("messagesInTopic", messageService.getMessagesFromTopic(topicID));
         return "messagesintopic";
+    }
+
+    @GetMapping("/searchIn")
+    public String searchEverywhere(@ModelAttribute("text") String searchText,
+                                   @RequestParam(value = "topics",defaultValue = "false") boolean topics,
+                                   @RequestParam(value = "users", defaultValue = "false") boolean users,
+                                   @RequestParam(value = "messages", defaultValue = "false") boolean messages,
+                                   Model model){
+        model.addAttribute("messages",messageService.searchIn(searchText,topics,users,messages));
+        return "allmessages";
     }
 
 
