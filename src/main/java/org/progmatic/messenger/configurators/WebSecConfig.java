@@ -17,13 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class WebSecConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserService us = new UserService();
-        return new UserService();
-    }
-
-
     @SuppressWarnings("deprecation")
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -33,10 +26,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSec) throws Exception {
         httpSec.authorizeRequests()
-                .antMatchers("/css/**").permitAll()
-                .and()
-                .authorizeRequests()
-                .antMatchers("/error").permitAll()
+                .antMatchers("/css/**", "/error", "/registration", "/rest/csrf", "/rest/registration").permitAll()
                 .and()
                 .formLogin()
                 .loginPage("/loginpage").permitAll()
@@ -46,7 +36,6 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/loginpage")
                 .and()
                 .authorizeRequests()
-                .antMatchers("/registration").permitAll()
 //                .antMatchers("messages/delete").hasRole("ADMIN")
 //                .antMatchers("messages/statistic").hasRole("OFFICE")
                 .anyRequest().authenticated();

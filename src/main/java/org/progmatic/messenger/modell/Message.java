@@ -1,5 +1,6 @@
 package org.progmatic.messenger.modell;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -39,6 +40,7 @@ public class Message {
     private String message;
 
     @ManyToOne
+
     private Topic topic;
 
     @OneToMany
@@ -62,7 +64,6 @@ public class Message {
         this.message = message;
         this.id = id;
         this.commentsList = commentsList;
-
         this.time = LocalDateTime.now();
     }
 

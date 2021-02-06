@@ -11,7 +11,7 @@ import java.util.Arrays;
 @ControllerAdvice
 public class MyControllerAdvice {
 
-    private Logger logger = LoggerFactory.getLogger(MyControllerAdvice.class);
+    private final Logger logger = LoggerFactory.getLogger(MyControllerAdvice.class);
 
     @ExceptionHandler
     public String exception(Exception ex, Model model){

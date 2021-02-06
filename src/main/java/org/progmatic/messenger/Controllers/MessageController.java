@@ -17,25 +17,22 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
 public class MessageController {
 
+    @Autowired
     private MessageService messageService;
+    @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
     private TopicService topicService;
 
-    @Autowired
-    public MessageController(MessageService messageService, UserDetailsService service,
-                             TopicService topicService) {
-        this.messageService = messageService;
-        this.userDetailsService = service;
-        this.topicService = topicService;
-    }
 
     @GetMapping({"/allmessages"})
-    public String messages(Model model) {
+    public String allMessages(Model model) {
         model.addAttribute("message", "Üzenet szövege");
         model.addAttribute("writtenBy", "Írta");
         model.addAttribute("time", "Időpont");
@@ -61,7 +58,7 @@ public class MessageController {
         UserService userService = (UserService) userDetailsService;
         MyUser actualUser = (MyUser) userDetailsService.loadUserByUsername(((UserDetails) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal()).getUsername());
-        List<MyUser> othersList = userService.lisAllUser();
+        Collection<MyUser> othersList = userService.lisAllUser();
         othersList.removeIf(myUser -> myUser.getId() == actualUser.getId());
         model.addAttribute("actualUser", actualUser);
         model.addAttribute("users", othersList);
@@ -78,7 +75,6 @@ public class MessageController {
         topicService.addNewTopic(topic);
         return "redirect:/addmessage";
     }
-
 
     @PostMapping("/addmessage/create")
     public String createMessage(@ModelAttribute("message") @Valid Message msg,
@@ -105,16 +101,6 @@ public class MessageController {
             @PathVariable("text") String text,
             Model model) {
         model.addAttribute("message", messageService.modifyMessage(messagesID, text));
-        return "onemessage";
-    }
-
-    @GetMapping("/onemessage/{id}/{sleep}/{text}")
-    public String modifyMessageTextWithSleep(
-            @PathVariable("id") int messagesID,
-            @PathVariable("sleep") long sleep,
-            @PathVariable("text") String text,
-            Model model) throws InterruptedException {
-        model.addAttribute("message", messageService.modifyMessage(messagesID, sleep, text));
         return "onemessage";
     }
 
