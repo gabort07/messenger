@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class UserController {
 
-    private final UserDetailsService userDetailsService;
+    private final UserService userService;
 
     @Autowired
-    public UserController(UserDetailsService service){
-        this.userDetailsService= service;
+    public UserController(UserService service){
+        this.userService= service;
     }
 
     @GetMapping("/registration")
@@ -28,10 +28,9 @@ public class UserController {
 
     @PostMapping("/registration")
     public String registerUser(@ModelAttribute("User") MyUser user, BindingResult bindingResult) {
-        UserService userService = (UserService) userDetailsService;
         if(userService.isUserNameTaken(user.getUserName())){
             bindingResult.addError(new FieldError("User","userName", "User name taken"));
-        return "/registration";
+        return "registration";
         }
         userService.addUser(user);
         return "redirect:/loginpage";

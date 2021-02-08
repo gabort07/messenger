@@ -9,7 +9,6 @@ import org.progmatic.messenger.modell.Topic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
@@ -26,6 +25,7 @@ public class MessageService {
     UserService userService;
     @Autowired
     MessageService self;
+
 
     public List<Message> getAllMessages() {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
@@ -68,16 +68,19 @@ public class MessageService {
         return messageDTOWiev;
     }
 
-    @Transactional
-    public CreateMessageDTO createRestMessage(CreateMessageDTO restMessage) {
+    public Message makeMessageFromJson(CreateMessageDTO dto){
         Message newMessage = new Message();
-        newMessage.setMessage(restMessage.getText());
-        newMessage.setSender(userService.findUserByID(restMessage.getSenderID()));
-        newMessage.setReceiver(userService.findUserByID(restMessage.getReceiverID()));
-        newMessage.setTopic(self.searchTopicByID(restMessage.getTopicID()));
-        self.addMessage(newMessage);
+        newMessage.setMessage(dto.getText());
+        newMessage.setSender(userService.findUserByID(dto.getSenderID()));
+        newMessage.setReceiver(userService.findUserByID(dto.getReceiverID()));
+        newMessage.setTopic(self.searchTopicByID(dto.getTopicID()));
+        return newMessage;
+    }
 
-        return restMessage;
+    @Transactional
+    public void addMessage(CreateMessageDTO restMessage) {
+
+        self.addMessage(self.makeMessageFromJson(restMessage));
 
     }
 

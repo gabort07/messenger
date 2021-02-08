@@ -75,7 +75,6 @@ public class Message {
         this.version = version;
     }
 
-
     public MyUser getReceiver() {
         return receiver;
     }

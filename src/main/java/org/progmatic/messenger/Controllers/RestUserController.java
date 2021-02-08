@@ -2,40 +2,46 @@ package org.progmatic.messenger.Controllers;
 
 import org.progmatic.messenger.DTO.UserDTO;
 import org.progmatic.messenger.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/rest")
 public class RestUserController {
 
-    private final UserDetailsService userDetailsService;
+    private final UserService userService;
 
-    @Autowired
-    public RestUserController(UserDetailsService service){
-        this.userDetailsService= service;
+    public RestUserController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping("/registration")
-    public String registerUsers(@RequestBody UserDTO userDTO,
+    public ResponseEntity<?> registerUsers(@RequestBody UserDTO userDTO,
                                 BindingResult bindingResult){
-        UserService userService = (UserService) userDetailsService;
         if(userService.isUserNameTaken(userDTO.getUserName())){
-            return "userName taken";
+            return new ResponseEntity(HttpStatus.I_AM_A_TEAPOT);
         }
-        userService.addUserRest(userDTO);
-        return "registration success "+userDTO.getUserName();
+        userService.addUser(userDTO);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("/usersList")
+    @GetMapping("/regproba")
+    public String proba(){
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserName("pityuka");
+        userDTO.setEmail("pityu@p.hu");
+        userDTO.setPassword("pityuka");
+        userService.addUser(userDTO);
+        return "OK";
+    }
+
+    @GetMapping("/userslist")
     public @ResponseBody
-    Collection<UserDTO> allMessages(){
-        UserService userService = (UserService) userDetailsService;
+    List<UserDTO> allMessages(){
         return userService.makeUserDTOList();
     }
 

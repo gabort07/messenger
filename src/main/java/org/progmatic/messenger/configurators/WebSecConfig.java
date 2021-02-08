@@ -1,14 +1,11 @@
 package org.progmatic.messenger.configurators;
 
-import org.progmatic.messenger.modell.MyUser;
-import org.progmatic.messenger.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -26,11 +23,12 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSec) throws Exception {
         httpSec.authorizeRequests()
-                .antMatchers("/css/**", "/error", "/registration", "/rest/csrf", "/rest/registration").permitAll()
+                .antMatchers("/css/**", "/error", "/registration", "/rest/csrf", "/rest/registration", "/loginpage", "/rest/regproba").permitAll()
                 .and()
                 .formLogin()
                 .loginPage("/loginpage").permitAll()
-                .loginProcessingUrl("/loginpage/login")
+                .loginProcessingUrl("/loginpage/login").permitAll()
+                .defaultSuccessUrl("/allmessages")
                 .and()
                 .logout().permitAll()
                 .logoutSuccessUrl("/loginpage")

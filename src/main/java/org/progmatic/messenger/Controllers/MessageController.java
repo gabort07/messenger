@@ -24,11 +24,16 @@ import java.util.List;
 public class MessageController {
 
     @Autowired
-    private MessageService messageService;
+    MessageService messageService;
+
     @Autowired
-    private UserDetailsService userDetailsService;
-    @Autowired
-    private TopicService topicService;
+    TopicService topicService;
+
+    private final UserDetailsService userDetailsService;
+
+    public MessageController(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
 
     @GetMapping({"/allmessages"})
@@ -46,7 +51,6 @@ public class MessageController {
         return "main";
     }
 
-    @PreAuthorize("hasRole('USER')")
     @GetMapping("/logout")
     public String logout() {
         return "loginpage";

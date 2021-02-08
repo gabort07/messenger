@@ -16,7 +16,7 @@ import java.util.List;
 public class RestMessageController {
 
 
-    private MessageService messageService;
+    private final MessageService messageService;
 
     @Autowired
     public RestMessageController(MessageService messageService) {
@@ -40,7 +40,8 @@ public class RestMessageController {
     }
 
     @PostMapping(value = "/addmessage/create")
-    public CreateMessageDTO createMessage(@RequestBody CreateMessageDTO createMessageDTO) {
-        return messageService.createRestMessage(createMessageDTO);
+    public String createMessage(@RequestBody CreateMessageDTO createMessageDTO) {
+         messageService.addMessage(createMessageDTO);
+         return "OK";
     }
 }

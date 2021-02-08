@@ -4,7 +4,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.progmatic.messenger.DTO.UserDTO;
 import org.progmatic.messenger.modell.MyUser;
 import org.progmatic.messenger.modell.QMyUser;
+import org.progmatic.messenger.modell.QRole;
 import org.progmatic.messenger.modell.Role;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +25,7 @@ import java.util.List;
 @Service
 public class UserService implements UserDetailsService {
 
+    Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @PersistenceContext
     EntityManager entityManager;
@@ -29,27 +33,19 @@ public class UserService implements UserDetailsService {
     @Autowired
     UserService self;
 
-    JPAQueryFactory queryFactory;
-
-    public UserService() {
-        this.queryFactory = new JPAQueryFactory(entityManager);
-    }
-
 
     public Collection<MyUser> lisAllUser() {
+         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
         return queryFactory.selectFrom(QMyUser.myUser).fetch();
     }
 
     public boolean isUserNameTaken(String name) {
-        try {
-            self.searchUserByName(name);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
+       return self.searchUserByName(name) !=null;
     }
 
+    @Transactional
     public MyUser searchUserByName(String name) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
         return queryFactory.selectFrom(QMyUser.myUser).where(QMyUser.myUser.userName.eq(name)).fetchOne();
     }
 
@@ -58,29 +54,41 @@ public class UserService implements UserDetailsService {
     }
 
     public MyUser searchUserByEmail(String email) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
         return queryFactory.selectFrom(QMyUser.myUser).where(QMyUser.myUser.email.eq(email)).fetchOne();
     }
 
     @Transactional
-    public void addUser(MyUser user) {
-        Role userRole = entityManager.find(Role.class, 2);
-        entityManager.persist(user);
-        userRole.getUsersInThisRole().add(user);
-        user.setRegistrationTime(LocalDateTime.now());
+    public void addUser(UserDTO userDTO) {
+        self.addUser(self.makeUserFromJson(userDTO));
     }
 
     @Transactional
-    public void addUserRest(UserDTO userDTO) {
-        MyUser user = new MyUser();
-        entityManager.persist(user);
-        Role userRole = entityManager.find(Role.class, 2);
-        user.setUserName(userDTO.getUserName());
-        user.setPassword(user.getPassword());
-        user.getUserRoles().add(userRole);
-        user.setEmail(userDTO.getEmail());
-        user.setBirthDay(LocalDate.parse(userDTO.getBirthDay()));
-        user.setRegistrationTime(LocalDateTime.now());
+    public void addUser(MyUser user) {
+        Role userRole = self.returnRoleUserRole();
         userRole.getUsersInThisRole().add(user);
+        user.getUserRoles().add(userRole);
+        user.setRegistrationTime(LocalDateTime.now());
+        entityManager.persist(user);
+    }
+
+    public MyUser makeUserFromJson(UserDTO dto){
+        MyUser user = new MyUser();
+        user.setUserName(dto.getUserName());
+        user.setPassword(dto.getPassword());
+        user.setEmail(dto.getEmail());
+        if(dto.getBirthDay() != null) {
+            user.setBirthDay(LocalDate.parse(dto.getBirthDay()));
+        }
+        user.setRegistrationTime(LocalDateTime.now());
+        return user;
+    }
+
+    @Transactional
+    public Role returnRoleUserRole(){
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        return queryFactory.selectFrom(QRole.role)
+                .where(QRole.role.name.eq("ROLE_USER")).fetchOne();
     }
 
     @Transactional

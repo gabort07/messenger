@@ -44,7 +44,7 @@ public class MyUser extends WebSecurityConfigurerAdapter implements UserDetails{
     private List<Message> receivedMessages;
 
 //
-    @ManyToMany(mappedBy = "usersInThisRole")
+    @ManyToMany(mappedBy = "usersInThisRole",fetch = FetchType.EAGER)
     private List<Role> userRoles = new ArrayList<>();
 
     public MyUser(@NotNull String userName, @NotNull String email,
